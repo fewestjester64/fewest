@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Chat - Qwen</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f0f0f0;
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .input-area {
+            margin-bottom: 15px;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            padding: 10px;
+            font-size: 14px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            resize: vertical;
+        }
+        .button {
+            padding: 10px 20px;
+            background-color: #007BFF;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+        .button:hover {
+            background-color: #0056b3;
+        }
+        .response {
+            margin-top: 20px;
+            background: #f9f9f9;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            white-space: pre-wrap;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>AI Chat - Qwen</h1>
+        <div class="input-area">
+            <textarea id="userInput" placeholder="Typ je vraag of zin hier..."></textarea>
+            <br>
+            <button class="button" onclick="sendMessage()">Verzenden</button>
+        </div>
+        <div class="response" id="responseArea"></div>
+    </div>
+
+    <script>
+        async function sendMessage() {
+            const userInput = document.getElementById("userInput").value.trim();
+            const responseArea = document.getElementById("responseArea");
+
+            if (!userInput) {
+                alert("Typ iets in!");
+                return;
+            }
+
+            // Toon gebruikersinput
+            responseArea.innerHTML += `<div><strong>Jij:</strong><br><p style="margin: 5px
+0;">${userInput}</p></div>`;
+            responseArea.scrollTop = responseArea.scrollHeight;
+
+            // Verzending naar AI (voorbeeld: Qwen API)
+            // Vervang 'YOUR_API_KEY' met je eigen API-sleutel
+            const apiKey = "YOUR_API_KEY"; // Gebruik je eigen API-sleutel
+            const response = await
+fetch("https://dashscope.aliyuncs.com/api/v1/services/aigc/text-generation/generation", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${apiKey}`,
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    input: userInput,
+                    parameters: {
+                        model: "qwen-max",
+                        top_p: 0.95,
+                        temperature: 0.8
+                    }
+                })
+            });
+
+            const data = await response.json();
+            const aiResponse = data.output.text[0];
+
+            // Toon AI-antwoord
+            responseArea.innerHTML += `<div><strong>Qwen:</strong><br><p style="margin: 5px
+0;">${aiResponse}</p></div>`;
+            responseArea.scrollTop = responseArea.scrollHeight;
+
+            // Leegveld
+            document.getElementById("userInput").value = "";
+        }
+    </script>
+</body>
+</html>
